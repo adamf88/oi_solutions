@@ -5,6 +5,11 @@
 
 using namespace std;
 
+//------------------- FAST READ -------------------------
+
+#define FAST_READ
+
+#ifdef FAST_READ
 
 #define BUF_SIZE 400
 char bufor[BUF_SIZE + 1 + 30];
@@ -81,7 +86,20 @@ void read_int(unsigned& l)
 	buf_pointer = data;
 }
 
+#else
 
+void init()
+{
+}
+
+void read_int(unsigned& l)
+{
+	scanf("%u", &l);
+}
+
+#endif
+
+//------------------- FAST READ END -------------------------
 
 struct elem
 {
@@ -96,7 +114,6 @@ struct elem
 	int childs;
 	int childs_tp;
 	int size;
-	int id;
 };
 vector<elem> t;
 vector<int> krt, lens;
@@ -114,29 +131,18 @@ int nwd(int a, int b)
 	return a;
 }
 
-#define FAST_READ 1
-
 int main()
 {
-
-#ifdef FAST_READ
 	init();
 	read_int(n);
-#else
-	scanf("%d", &n);
-#endif
 	t.resize(n + 1);
 	lens.resize(n + 1);
 	krt.resize(n + 1);
 	for (int i = 1; i <= n - 1; ++i)
 	{
 		unsigned p;
-#ifdef FAST_READ
+
 		read_int(p);
-#else
-		scanf("%u", &p);
-#endif
-		t[i].id = i;
 		t[i+1].parent = &t[p];
 		t[p].childs++;
 		t[p].childs_tp++;
@@ -150,14 +156,12 @@ int main()
 		{
 			int tree_size = t[i].size;
 			elem* e = &t[i];
-			while (e->parent)
+			while (e->parent && !e->childs_tp)
 			{
 				e = e->parent;
 				e->size += tree_size;
 				tree_size = e->size;
 				--(e->childs_tp);
-				if (e->childs_tp)
-					break;
 			}
 		}
 	}
